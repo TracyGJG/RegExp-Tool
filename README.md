@@ -21,6 +21,6 @@ Facilities include the ability to:
 
 * Include a page of help text documenting how to use the application
 * Include more tool-tips on the buttons
-* Reset the 'Run Test' button if the check boxes are toggled
+* Reset the 'Run Test' button if either checkbox is toggled
 * Reset the 'Run Test' button if the RegExp pattern is revised
 * Document the path of the project file (if selected) in the status bar
