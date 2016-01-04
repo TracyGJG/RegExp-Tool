@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html>
+  <head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<meta http-equiv="X-UA-Compatible" content="IE=11">
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+		<meta name="application-name" content="RegExp Tool">
+		<meta name="description" content="Regular Expression Tool">
+		<meta name="author" content="TGJG">
+    <title>RegExp Tool</title>
+    <style type='text/css'>
+      html, body {
+        margin: 0;
+        height: 100%;
+        width: 100%;
+      }
+      body.reference {
+        overflow: hidden;
+      }
+      body.project {
+        overflow-y: scroll;
+        overflow-x: auto;
+      }
+      div.divReference,
+      div.divProject {
+        height: 100%;
+        width: 100%;
+      }
+      body.reference div.divReference,
+      body.project div.divProject {
+        display: block;
+      }
+      body.project div.divReference,
+      body.reference div.divProject {
+        display: none;
+      }
+
+      tr {
+        height: 26px;
+        background-color: #DDD;
+      }
+      .tabTest { width:100%;}
+      #tbTests td { text-align: center;}
+      #tbTests th {
+        text-align: left;
+        color: blue;
+      }
+      #thRuntest { cursor: pointer;}
+      #refHeader th,
+      thead th {
+        color: white;
+        background-color: #55D;
+      }
+      td.testcase {
+        text-align: left;
+      }
+      #tdRes {
+        text-align: center;
+        text-transform: uppercase;
+        font-size: 8pt;
+      }
+      #tdRes.true {
+        color: white;
+        background-color: green;
+        font-size: 12pt;
+      }
+      #tdRes.false {
+        color: black;
+        background-color: red;
+        font-weight: bold;
+        font-size: 12pt;
+      }
+      #tdRes.unknown {
+        background-color: orange;
+        font-size: 12pt;
+      }
+      button {
+        width: 80px;
+        height: 26px;
+        cursor: pointer;
+      }
+      td.tdIC button {
+        width: 120px;
+        float: right;
+      }
+      td.tdIC button.btnShowRef {
+        width: 140px;
+      }
+      #txtPattern {
+        border: 1px solid black;
+        border-right-color: grey;
+        border-bottom-color: grey;
+        background-color: #EE7;
+        text-align: center;
+        height: 22px;
+        padding: 2px 0 0;
+      }
+      td.testcase, td.tdExpRes {
+        color: blue;
+      }
+      th.thAdd {
+        color: black;
+        background-color: lime;
+      }
+      td.tdDel {
+        color: white;
+        background-color: #700;
+        font-weight: bold;
+      }
+      th.thAdd, td.tdDel, td.testcase, td.tdExpRes {
+        cursor: pointer;
+      }
+      td.current #btnSavetest,
+      td.current #btnRuntest {
+        display: inline;
+      }
+      td.unloaded #btnLoadtest,
+      td.loaded #btnSavetest,
+      td.loaded #btnRuntest {
+        display: inline;
+      }
+      td.loaded #btnLoadtest,
+      td.unloaded #btnSavetest,
+      td.unloaded #btnRuntest {
+        display: none;
+      }
+      td.tdIC {
+        text-align: left;
+      }
+      td.tdIC input[type='checkbox'] {
+      	margin-left: 10px;
+			}
+      td.tdIC input[type='checkbox'],
+      td.tdIC label {
+      	margin-top: 6px;
+			}
+      div.divReference div {
+        position: absolute;
+        left: 0px;
+        right: 0px;
+      }
+      div.refHeader {
+        top: 0px;
+        height: 65px;
+        background-color: #55D;
+        padding-top: 5px;
+      }
+      div.refHeader button {
+        width: 140px;
+        height: 40px;
+        float: right;
+        margin-top: -5px;
+      }
+      div.refHeader table {
+        width: 100%;
+        background-color: white;
+      }
+      div.refHeader tr {
+        border-color: #55D;
+      }
+      div.refBody {
+        top: 70px;
+        bottom: 0px;
+        overflow-y: scroll;
+        overflow-x: none;
+      }
+      div.refHeader span {
+        padding-left: 10px;
+        margin-top: 5px;
+        color: white;
+      }
+      div.refHeader tr {
+        background-color: #55D;
+        color: white;
+      }
+      span.Title { font-size: 18pt; font-weight: bold;}
+      span.Subtitle { font-size: 14pt;}
+    </style>
+  </head>
+
+  <body class='project'>
+    <div class='divProject'>
+        <table id='tabTest' class='tabTest' border='0'>
+          <colgroup>
+            <col width='*'/>
+            <col width='40px'/>
+            <col width='80px'/>
+            <col width='80px'/>
+            <col width='80px'/>
+          </colgroup>
+
+          <thead>
+            <tr>
+              <td><div contenteditable="true" id='txtPattern'></div></td>
+              <td colspan='2' class='tdIC'>
+                <button id='btnCpytest' onclick='copyPtrn()' title='Copy pattern to clipboard'>Copy Pattern</button>
+              </td>
+              <td id='tdControls' class='unloaded'>
+                <button id='btnLoadtest' onclick='loadTests()'>Load</button>
+                <button id='btnSavetest' onclick='saveTests()'>Save</button>
+              </td>
+              <td>
+                <button id='btnRuntest' onclick='processTests()'>Run Test</button>
+              </td>
+            </tr>
+            <tr>
+              <td class='tdIC'>
+                <input type="checkbox" id='chkIC'/><label for='chkIC'>Ignore Case</label>
+                <input type="checkbox" id='chkEP' checked='checked'/><label for='chkEP'>Entrie Pattern</label>
+                <button class='btnShowRef' onclick='switchDisplay("reference")'>Show Reference</button>
+              </td>
+              <td colspan='2' class='tdIC'>
+                <button id='btnClrPtn' onclick='clearPtrn()'>Clear Pattern</button>
+              </td>
+              <td>
+                <button id='btnClrtest' onclick='clearAll()'>Clear All</button>
+              </td>
+              <td id='tdRes'>Result<br/>Here</td>
+            </tr>
+            <tr>
+              <th>Test case</th>
+              <th class='thAdd' onclick='addTestcase()'>ADD</th>
+              <th>Expected</th>
+              <th>Actual</th>
+              <th>Test</th>
+            </tr>
+          </thead>
+        </table>
+        <table class='tabTest' border='0'>
+          <colgroup>
+            <col width='*'/>
+            <col width='40px'/>
+            <col width='80px'/>
+            <col width='82px'/>
+            <col width='82px'/>
+          </colgroup>
+          <tbody id='tbTests'></tbody>
+        </table>
+    </div>
+
+    <div class='divReference'>
+        <div class='refHeader'>
+            <button onclick='switchDisplay("project")'>Return to Project</button>
+            <span class='Title'>Regular Expression</span>
+            <span class='Subtitle'>Reference</span>
+            <table>
+              <colgroup>
+                <col width='100px' align='center' />
+                <col width='*' />
+              </colgroup>
+              <tr><th>Code</th><th>Description</th></tr>
+            </table>
+        </div>
+        <div class='refBody'>
+            <table>
+              <colgroup>
+                <col width='100px' align='center' />
+                <col width='*' />
+              </colgroup>
+              <tr><th>\</th><td>Marks the next character as either a special character or a literal. For example, &quot;n&quot; matches the character &quot;n&quot;. &quot;\n&quot; matches a newline character. The sequence &quot;\\&quot; matches &quot;\&quot; and &quot;\(&quot; matches &quot;(&quot;.</td></tr>
+              <tr><th>^</th><td>Matches the beginning of input.</td></tr>
+              <tr><th>$</th><td>Matches the end of input.</td></tr>
+              <tr><th>*</th><td>Matches the preceding character zero or more times. For example, &quot;zo*&quot; matches either &quot;z&quot; or &quot;zoo&quot;.</td></tr>
+              <tr><th>+</th><td>Matches the preceding character one or more times. For example, &quot;zo+&quot; matches &quot;zoo&quot; but not &quot;z&quot;.</td></tr>
+              <tr><th>?</th><td>Matches the preceding character zero or one time. For example, &quot;a?ve?&quot; matches the &quot;ve&quot; in &quot;never&quot;.</td></tr>
+              <tr><th>.</th><td>Matches any single character except a newline character.</td></tr>
+              <tr><th>(pattern)</th><td>Matches pattern and remembers the match. The matched substring can be retrieved from the resulting Matches collection, using Item [0]...[n]. To match parentheses characters ( ), use &quot;\(&quot; or &quot;\)&quot;.</td></tr>
+              <tr><th>x|y</th><td>Matches either x or y. For example, &quot;z|food&quot; matches &quot;z&quot; or &quot;food&quot;. &quot;(z|f)ood&quot; matches &quot;zoo&quot; or &quot;food&quot;.</td></tr>
+              <tr><th>{n}</th><td>n is a nonnegative integer. Matches exactly n times. For example, &quot;o{2}&quot; does not match the &quot;o&quot; in &quot;Bob,&quot; but matches the first two o&apos;s in &quot;foooood&quot;.</td></tr>
+              <tr><th>{n,}</th><td>n is a nonnegative integer. Matches at least n times. For example, &quot;o{2,}&quot; does not match the &quot;o&quot; in &quot;Bob&quot; and matches all the o&apos;s in &quot;foooood&quot;. &quot;o{1,}&quot;is equivalent to &quot;o+&quot;. &quot;o{0,}&quot; is equivalent to &quot;o*&quot;.</td></tr>
+              <tr><th>{n,m}</th><td>m and n are nonnegative integers. Matches at least n and at most m times. For example, &quot;o{1,3}&quot; matches the first three o&apos;s in &quot;fooooood&quot;. &quot;o{0,1}&quot; is equivalent to &quot;o?&quot;.</td></tr>
+              <tr><th>[xyz]</th><td>A character set. Matches any one of the enclosed characters. For example, &quot;[abc]&quot; matches the &quot;a&quot; in &quot;plain&quot;.</td></tr>
+              <tr><th>[^xyz]</th><td>A negative character set. Matches any character not enclosed. For example, &quot;[^abc]&quot; matches the &quot;p&quot; in &quot;plain&quot;.</td></tr>
+              <tr><th>[a-z]</th><td>A range of characters. Matches any character in the specified range. For example, &quot;[a-z]&quot; matches any lowercase alphabetic character in the range &quot;a&quot; through &quot;z&quot;.</td></tr>
+              <tr><th>[^m-z]</th><td>A negative range characters. Matches any character not in the specified range. For example, &quot;[m-z]&quot; matches any character not in the range &quot;m&quot; through &quot;z&quot;.</td></tr>
+              <tr><th>\b</th><td>Matches a word boundary, that is, the position between a word and a space. For example, &quot;er\b&quot; matches the &quot;er&quot; in &quot;never&quot; but not the &quot;er&quot; in &quot;verb&quot;.</td></tr>
+              <tr><th>\B</th><td>Matches a nonword boundary. &quot;ea*r\B&quot; matches the &quot;ear&quot; in &quot;never early&quot;.</td></tr>
+              <tr><th>\d</th><td>Matches a digit character. Equivalent to [0-9].</td></tr>
+              <tr><th>\D</th><td>Matches a nondigit character. Equivalent to [^0-9].</td></tr>
+              <tr><th>\f</th><td>Matches a form-feed character.</td></tr>
+              <tr><th>\n</th><td>Matches a newline character.</td></tr>
+              <tr><th>\r</th><td>Matches a carriage return character.</td></tr>
+              <tr><th>\s</th><td>Matches any white space including space, tab, form-feed, etc. Equivalent to &quot;[ \f\n\r\t\v]&quot;.</td></tr>
+              <tr><th>\S</th><td>Matches any nonwhite space character. Equivalent to &quot;[^ \f\n\r\t\v]&quot;.</td></tr>
+              <tr><th>\t</th><td>Matches a tab character.</td></tr>
+              <tr><th>\v</th><td>Matches a vertical tab character.</td></tr>
+              <tr><th>\w</th><td>Matches any word character including underscore. Equivalent to &quot;[A-Za-z0-9_]&quot;.</td></tr>
+              <tr><th>\W</th><td>Matches any nonword character. Equivalent to &quot;[^A-Za-z0-9_]&quot;.</td></tr>
+              <tr><th>\num</th><td>Matches num, where num is a single positive integer, as a reference back to remembered matches. For example, &quot;(.)\1&quot; matches two consecutive identical characters.</td></tr>
+              <tr><th>\{oct}</th><td>Matches {oct}, where {oct}is a 2 to 3 digit octal escape value. For example, &quot;\11&quot; and &quot;\011&quot; both match a tab character. &quot;\0011&quot; is the equivalent of &quot;\001&quot; &amp; &quot;1&quot;. Octal escape values must not exceed 256. If they do, only the first two digits comprise the expression. Allows ASCII codes to be used in regular expressions.</td></tr>
+              <tr><th>\x{hex}</th><td>Matches {hex}, where {hex} is a hexadecimal escape value. Hexadecimal escape values must be exactly two digits long. For example, &quot;\x41&quot; matches &quot;A&quot;. &quot;\x041&quot; is equivalent to &quot;\x04&quot; &amp; &quot;1&quot;. Allows ASCII codes to be used in regular expressions.</td></tr>
+            </table>
+        </div>
+    </div>
+
+    <script>
+      "use strict";
+
+      var strXML_Version = "MSXML2.DOMDocument";
+      var objSourceDocument = new ActiveXObject(strXML_Version);
+
+      function loadTestcases(pstrTestcases) {
+        var objRegExTests = JSON.parse(pstrTestcases);
+        var arrHTML=[];
+        var numTest;
+
+        for (numTest=0; numTest<objRegExTests.tests.length; numTest+=1) {
+          arrHTML.push( createTestcase( objRegExTests.tests[numTest].test, objRegExTests.tests[numTest].expRes));
+        }
+        document.getElementById("txtPattern").innerText = objRegExTests.pattern;
+        document.getElementById("chkIC").checked = objRegExTests.IC_Flag;
+        document.getElementById("chkEP").checked = objRegExTests.EP_Flag;
+        document.getElementById("tbTests").innerHTML = arrHTML.join("");
+        processTests();
+      }
+
+      function processTests() {
+        var objChkIC = document.getElementById("chkIC");
+        var objChkEP = document.getElementById("chkEP");
+        var strPattern = document.getElementById("txtPattern").innerText;
+        var testcases = document.getElementById("tbTests");
+        var blnFinalResult = true;
+        var blnTestResult;
+        var specificTestcase;
+        var objTestCase;
+        var objTestResult;
+        var ptnRad;
+
+        if (objChkEP.checked) {
+					if (!(/^\^/.test(strPattern))) {
+						strPattern = "^"+ strPattern;
+					}
+					if (!(/\$$/.test(strPattern))) {
+						strPattern = strPattern+ "$";
+					}
+        }
+
+        ptnRad = new RegExp(strPattern, objChkIC.checked? "i": "");
+        for (var testcase=0; testcase<testcases.rows.length; testcase++) {
+          specificTestcase = testcases.rows[testcase];
+          objTestCase = specificTestcase.cells[3];
+          objTestResult = specificTestcase.cells[4];
+
+          objTestCase.innerText = ptnRad.test(specificTestcase.cells[0].innerText);
+          blnTestResult = (specificTestcase.cells[2].innerText == objTestCase.innerText);
+          objTestResult.innerText = blnTestResult;
+          objTestResult.className = blnTestResult;
+
+          blnFinalResult = blnFinalResult && blnTestResult;
+        }
+        var objTDRes = document.getElementById("tdRes");
+        objTDRes.className = blnFinalResult;
+        objTDRes.innerText = blnFinalResult;
+      }
+      function toggleExpRes() {
+        var objSrc = event.srcElement;
+        objSrc.innerText = (objSrc.innerText === "true")? "false": "true";
+        resetResult();
+      }
+      function removeTestcase() {
+        var objSrc = event.srcElement.parentNode;
+        if (confirm( "Remove test case ["+ objSrc.cells[0].innerText+ "]?")) {
+          objSrc.parentNode.deleteRow(objSrc.rowIndex);
+        }
+        resetResult();
+      }
+      function resetResult() {
+        var objTDRes = document.getElementById("tdRes");
+        objTDRes.className = "unknown";
+        objTDRes.innerText = "RERUN";
+      }
+      function addTestcase() {
+        var objSrc = event.srcElement;
+        var strTestcase = "";
+        var blnExpRes = true;
+
+        strTestcase = prompt( "Enter test case",strTestcase);
+        if (strTestcase) {
+          blnExpRes = confirm( "Confirm the Expected result is a pass? OK for true, Cancel for false.");
+          document.getElementById("tbTests").innerHTML += createTestcase( strTestcase, blnExpRes);
+        }
+        resetResult();
+        document.getElementById("tdControls").className = "loaded";
+      }
+
+      function createTestcase(pstrTestcase, pblnExpres) {
+        var arrHTML=[];
+
+        arrHTML.push( "<tr><th class='testcase' ondblclick='editTestcase()'>"+ pstrTestcase);
+        arrHTML.push( "</th><td ondblclick='removeTestcase()' class='tdDel'>DEL");
+        arrHTML.push( "</td><td class='tdExpRes' ondblclick='toggleExpRes()'>");
+        arrHTML.push( pblnExpres? "true": "false");
+        arrHTML.push( "</td><td></td><td></td></tr>");
+        return arrHTML.join("");
+      }
+
+      function editTestcase() {
+        var objSrc = event.srcElement.parentNode;
+        var strTestcase = objSrc.cells[0].innerText;
+        strTestcase = prompt( "Edit test case",strTestcase);
+        if (strTestcase) {
+          objSrc.cells[0].innerText = strTestcase;
+          resetResult();
+        }
+      }
+
+      function loadTests() {
+        var objSrc = event.srcElement;
+        var strFilename = "RegExpTest1.xml";
+        var arrRegExTests = [];
+        var arrTestPatt, arrTestRes, numTest;
+
+        strFilename = prompt("Please specify the location and name of the project file.",strFilename);
+        if (strFilename) {
+          clearAll();
+          objSourceDocument.async = false;
+          objSourceDocument.validateOnParse = false;
+          objSourceDocument.load(strFilename);
+
+          arrTestPatt = objSourceDocument.selectNodes("/RegExTest/test");
+          arrTestRes = objSourceDocument.selectNodes("/RegExTest/test/@expRes");
+
+          arrRegExTests.push('{"pattern":"');
+          arrRegExTests.push(objSourceDocument.selectSingleNode("/RegExTest/@pattern").text);
+          arrRegExTests.push('", "IC_Flag":');
+          arrRegExTests.push(objSourceDocument.selectSingleNode("/RegExTest/@IC_Flag").text);
+          arrRegExTests.push(', "EP_Flag":');
+          arrRegExTests.push(objSourceDocument.selectSingleNode("/RegExTest/@EP_Flag").text);
+          arrRegExTests.push(', "tests":[');
+
+          for (numTest=0; numTest<arrTestPatt.length; numTest+=1) {
+            arrRegExTests.push('{"test":"'+ arrTestPatt[numTest].text);
+            arrRegExTests.push('","expRes":'+ arrTestRes[numTest].text);
+            arrRegExTests.push(((1+numTest)<arrTestPatt.length)? '},': '}');
+          }
+          arrRegExTests.push(']}');
+          loadTestcases(arrRegExTests.join(""));
+          objSrc.parentNode.className = "loaded";
+        }
+        else {
+          alert("Warning: No file specified.");
+        }
+      }
+      function saveTests() {
+        var objSrc = event.srcElement;
+        var strFilename=objSourceDocument.url;
+        var arrTestcases=[];
+
+        strFilename = prompt("Please specify the location and name of the project file.",strFilename);
+        if (strFilename) {
+          arrTestcases.push('<RegExTest pattern="'+
+            document.getElementById("txtPattern").innerText.replace(/\\/g,"\\\\"));
+          arrTestcases.push('" IC_Flag="'+ document.getElementById("chkIC").checked);
+          arrTestcases.push('" EP_Flag="'+ document.getElementById("chkEP").checked+ '">\n');
+
+          var testcases = document.getElementById("tbTests");
+          var specificTestcase;
+
+          for (var testcase=0; testcase<testcases.rows.length; testcase++) {
+            specificTestcase = testcases.rows[testcase];
+            arrTestcases.push('<test expRes="'+ specificTestcase.cells[2].innerText);
+            arrTestcases.push('">'+ specificTestcase.cells[0].innerText);
+            arrTestcases.push('</test>\n');
+          }
+          arrTestcases.push('</RegExTest>');
+
+          objSourceDocument.async = false;
+          objSourceDocument.validateOnParse = false;
+          objSourceDocument.loadXML(arrTestcases.join(""));
+          objSourceDocument.save(strFilename);
+          objSrc.parentNode.className = "unloaded";
+        }
+      }
+      function clearAll() {
+        var objTestcases = document.getElementById("tbTests");
+        var numTestcases = objTestcases.rows.length;
+        var objSrc = document.getElementById("tdControls");
+
+        for (; numTestcases; numTestcases-=1) {
+          objTestcases.parentNode.deleteRow();
+        }
+        clearPtrn();
+        objSrc.className = "unloaded";
+      }
+      function clearPtrn() {
+        document.getElementById("txtPattern").innerText="";
+        resetResult();
+      }
+      function copyPtrn() {
+        window.clipboardData.setData("text", document.getElementById("txtPattern").innerText);
+      }
+
+      function switchDisplay(pstrDisplay) {
+          document.body.className = pstrDisplay;
+      }
+
+    </script>
+  </body>
+</html>
