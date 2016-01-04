@@ -14,3 +14,13 @@ Facilities include the ability to:
 </ul>
 <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
 <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/InteractiveResource" property="dct:title" rel="dct:type">XML Tool</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="http://gilmoretj.wordpress.com/" property="cc:attributionName" rel="cc:attributionURL">Mr Tracy-Gregory Gilmore</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+
+-----
+
+## Planned improvements
+
+* Include a page of help text documenting how to use the application
+* Include more tool-tips on the buttons
+* Reset the 'Run Test' button if the check boxes are toggled
+* Reset the 'Run Test' button if the RegExp pattern is revised
+* Document the path of the project file (if selected) in the status bar

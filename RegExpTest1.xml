@@ -1,4 +1,4 @@
-<RegExTest pattern="^(0|([1-9]\\d{0,3}))(\\.\\d?[1-9])?$" IC_Flag="true" EP_Flag="true">
+<RegExTest pattern="(0|([1-9]\\d{0,3}))(\\.\\d?[1-9])?" IC_Flag="true" EP_Flag="true">
 	<test expRes="true">0</test>
 	<test expRes="true">0.1</test>
 	<test expRes="true">0.01</test>
