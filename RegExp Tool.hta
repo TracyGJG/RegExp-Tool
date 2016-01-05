@@ -1,44 +1,63 @@
 <!DOCTYPE html>
 <html>
   <head>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-		<meta http-equiv="X-UA-Compatible" content="IE=11">
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-		<meta name="application-name" content="RegExp Tool">
-		<meta name="description" content="Regular Expression Tool">
-		<meta name="author" content="TGJG">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=11">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<meta name="application-name" content="RegExp Tool">
+	<meta name="description" content="Regular Expression Tool">
+	<meta name="author" content="Mr Tracy-Gregory J Gilmore"/>
     <title>RegExp Tool</title>
     <style type='text/css'>
       html, body {
         margin: 0;
         height: 100%;
         width: 100%;
-      }
-      body.reference {
         overflow: hidden;
       }
-      body.project {
-        overflow-y: scroll;
-        overflow-x: auto;
-      }
+
+	footer {
+		position: absolute;
+		height: 40px;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		background-color: #DDD;
+    }
+
+	.statusBar {
+		position: absolute;
+		height: 20px;
+		right: 130px;
+		bottom: 5px;
+		left: 5px;
+		border: 1px solid black;
+		border-bottom-color: gray;
+		border-right-color: gray;
+		background-color: #fff;
+		padding: 4px;
+	}
+      div.divHelp,
       div.divReference,
       div.divProject {
       	position: absolute;
       	top: 0;
       	left: 0;
-      	bottom: 35px;
+      	bottom: 40px;
       	right: 0;
+        overflow: auto;
       }
+      div.divHelp,
+      div.divReference,
+      div.divProject {
+        display: none;
+      }
+      body.help div.divHelp,
       body.reference div.divReference,
       body.project div.divProject {
         display: block;
       }
-      body.project div.divReference,
-      body.reference div.divProject {
-        display: none;
-      }
-
       tr {
         height: 26px;
         background-color: #DDD;
@@ -54,6 +73,10 @@
       thead th {
         color: white;
         background-color: #55D;
+      }
+      th.testcase {
+        padding-left: 5px;
+        cursor: pointer;
       }
       td.testcase {
         text-align: left;
@@ -99,8 +122,9 @@
         height: 22px;
         padding: 2px 0 0;
       }
-      td.testcase, td.tdExpRes {
+      td.tdExpRes {
         color: blue;
+        cursor: pointer;
       }
       th.thAdd {
         color: black;
@@ -133,11 +157,11 @@
       }
       td.tdIC input[type='checkbox'] {
       	margin-left: 10px;
-			}
+	  }
       td.tdIC input[type='checkbox'],
       td.tdIC label {
       	margin-top: 6px;
-			}
+	  }
       div.divReference div {
         position: absolute;
         left: 0px;
@@ -148,6 +172,18 @@
         height: 65px;
         background-color: #55D;
         padding-top: 5px;
+      }
+      div.divHelp div.refHeader {
+        height: 35px;
+      }
+      div.divHelp div.refBody {
+      	position: absolute;
+      	top: 40px;
+      	right: 0;
+      	bottom: 0;
+      	left: 0;
+      	padding: 10px;
+        color: #00F;
       }
       div.refHeader button {
         width: 140px;
@@ -180,36 +216,30 @@
       span.Title { font-size: 18pt; font-weight: bold;}
       span.Subtitle { font-size: 14pt;}
       
+a.gitHub {
+	position: absolute;
+	bottom: 5px;
+	right: 95px;
+	width: 30px;
+	height: 30px;
+	background-image: url(data:image/png;base64,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);
+}
 
-		footer {
-			position: absolute;
-			height: 25px;
-			right: 124px;
-			bottom: 5px;
-			left: 5px;
-			border: 1px solid black;
-			border-bottom-color: white;
-			border-right-color: white;
-		}
+a.ccLic {
+	position: absolute;
+	bottom: 5px;
+	right: 5px;
+	width: 86px;
+	height: 30px;
+	background-repeat: no-repeat;
+	background-image: url(data:image/png;base64,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);
+}
 
-		a.gitHub {
-			position: absolute;
-			bottom: 0px;
-			right: 90px;
-			width: 30px;
-			height: 30px;
-			background-image: url(data:image/jpeg;base64,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);
-		}
-		
-		a.ccLic {
-			position: absolute;
-			bottom: 0px;
-			right: 0px;
-			width: 86px;
-			height: 30px;
-			background-repeat: no-repeat;
-			background-image: url(data:image/png;base64,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);
-		}
+	@media print {
+      th.thAdd, td.tdDel { display: none;}
+	  button { visibility: hidden;}
+      .tabTest, .tabTest td, .tabTest th { border: 1px solid #000;}
+	}
     </style>
   </head>
 
@@ -231,30 +261,31 @@
                 <button id='btnCpytest' onclick='copyPtrn()' title='Copy pattern to clipboard'>Copy Pattern</button>
               </td>
               <td id='tdControls' class='unloaded'>
-                <button id='btnLoadtest' onclick='loadTests()'>Load</button>
-                <button id='btnSavetest' onclick='saveTests()'>Save</button>
+                <button id='btnLoadtest' onclick='loadTests()' title='Load a RegExp project'>Load</button>
+                <button id='btnSavetest' onclick='saveTests()' title='Save a RegExp project'>Save</button>
               </td>
               <td>
-                <button id='btnRuntest' onclick='processTests()'>Run Test</button>
+                <button id='btnRuntest' onclick='processTests()' title='Exercise all test cases'>Run Test</button>
               </td>
             </tr>
             <tr>
               <td class='tdIC'>
-                <input type="checkbox" id='chkIC'/><label for='chkIC'>Ignore Case</label>
-                <input type="checkbox" id='chkEP' checked='checked'/><label for='chkEP'>Entire Pattern</label>
-                <button class='btnShowRef' onclick='switchDisplay("reference")'>Show Reference</button>
+                <input type="checkbox" id='chkIC' onclick='resetResult'/><label for='chkIC'>Ignore Case</label>
+                <input type="checkbox" id='chkEP' onclick='resetResult' checked='checked'/><label for='chkEP'>Entire Pattern</label>
+                <button class='btnShowRef' onclick='switchDisplay("reference")' title='Switch view to show the Reference Page'>Show Reference</button>
+                <button class='btnShowHelp' onclick='switchDisplay("help")' title='Switch view to show Help Information'>Show Help</button>
               </td>
               <td colspan='2' class='tdIC'>
-                <button id='btnClrPtn' onclick='clearPtrn()'>Clear Pattern</button>
+                <button id='btnClrPtn' onclick='clearPtrn()' title='Empty the RegExp pattern field'>Clear Pattern</button>
               </td>
               <td>
-                <button id='btnClrtest' onclick='clearAll()'>Clear All</button>
+                <button id='btnClrtest' onclick='clearAll()' title='Remove all test cases'>Clear All</button>
               </td>
               <td id='tdRes'>Result<br/>Here</td>
             </tr>
             <tr>
               <th>Test case</th>
-              <th class='thAdd' onclick='addTestcase()'>ADD</th>
+              <th class='thAdd' onclick='addTestcase()' title='Create a new test case'>ADD</th>
               <th>Expected</th>
               <th>Actual</th>
               <th>Test</th>
@@ -273,9 +304,52 @@
         </table>
     </div>
 
+    <div class='divHelp'>
+        <div class='refHeader'>
+            <button onclick='switchDisplay("project")' title='Switch view to show the Project Page'>Return to Project</button>
+            <span class='Title'>Regular Expression</span>
+            <span class='Subtitle'>Help</span>
+        </div>
+        <div class='refBody'>
+			<h2>RegExp Project</h2>
+			<p>Essential to a RegExp Project is the Project file that can be loaded and saved. To reload a project (without saving) click the clear-all button.</p>
+			<p>At the heart of the RegExp Project is the RegExp pattern that can be entered and revised directly in the yellow input field.</p>
+			<p>There are two check boxs controls to specify how the pattern is to be processed.</p>
+			<ul>
+				<li>Ignore Case: applies the /i switch when testing text against the pattern so that is disregards the case of the alphabetic characters.</li>
+				<li>Entire Pattern: Selecting this switch forces the match to be a complete rather than partial check. Checking the switch applies the ^ prefix and $ suffix irrespective if the controls are present.</li>
+			</ul>
+			<p>The RegExp pattern can be reset/cleared using the Clear Pattern button.</p>
+			<p>The Copy Pattern button results in the RegExp pattern text being copied to the clipboard for use in other programs.</p>
+			<p>In order to perform a complete RegExp pattern test, press the Run Test button. Should anything change to the pattern, switches or test cases the test will have to be re-run, which will be indicated.</p>
+			<hr/>
+			<h2>Test Cases</h2>
+			<p>Projects consist of a number of test cases, each of which have four attributes.</p>
+			<ul>
+				<li>Test case (string): The text that will be used to exercise the RegExp pattern.</li>
+				<li>Expected: Boolean indication of the purpose of the test. True to confirm a positive match, False for a negative match.</li>
+				<li>Actual: The result of testing the RegExp pattern using the test case text: True = match, False = no match.</li>
+				<li>Test: Final confirmation that the test case result in the expected outcome.</li>
+			</ul>
+			<p>The Add cell in the header of the test case table enables the user to create a new test case for the project.</p>
+			<p>Double-clicking the test case text cell enables the user to revise the text.</p>
+			<p>The Delete cell against each test case enables the user to remove it from the project.</p>
+			<p>Double-clicking the expected cell for a test case enables the user to toggle the anticipated outcome.</p>
+			<hr/>
+			<h2>Switching View</h2>
+			<p>There are three buttons provided to switch between the available views: Project, Help and Reference.</p>
+			<ul>
+				<li>Project: provides you with all the facilities required to exercise a Regular Expression (RegExp) pattern through a collection of test cases.</li>
+				<li>Help: presents this instruction page.</li>
+				<li>Reference: shows you a table of all the codes used to encode a RegExp pattern. The selection applies to the JavaScript implementation but are standard for the majority of implementations.</li>
+			</ul>
+			<hr/>
+        </div>
+    </div>
+
     <div class='divReference'>
         <div class='refHeader'>
-            <button onclick='switchDisplay("project")'>Return to Project</button>
+            <button onclick='switchDisplay("project")' title='Switch view to show the Project Page'>Return to Project</button>
             <span class='Title'>Regular Expression</span>
             <span class='Subtitle'>Reference</span>
             <table>
@@ -329,15 +403,13 @@
     </div>
 
 	<footer>
-		<div class='statusBar' title='Status information'></div>
-	</footer>
-
-	<a class='gitHub' title='GitHub Repo' href='https://github.com/TracyGJG/RegExp-Tool' target='_blank'></a>
-
-	<a class='ccLic' title='This work is licensed under the
+		<div class='statusBar' title='Status information'>Enter a RegExp pattern or load a project.</div>
+		<a class='gitHub' title='GitHub Repo' href='https://github.com/TracyGJG/RegExp-Tool' target='_blank'></a>
+		<a class='ccLic' title='This work is licensed under the
 Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
 To view a copy of this license, click to visit http://creativecommons.org/licenses/by-nc-sa/4.0/.'
 			href='http://creativecommons.org/licenses/by-nc-sa/4.0/' target='_blank'></a>
+	</footer>
 
 
     <script>
@@ -374,12 +446,12 @@ To view a copy of this license, click to visit http://creativecommons.org/licens
         var ptnRad;
 
         if (objChkEP.checked) {
-					if (!(/^\^/.test(strPattern))) {
-						strPattern = "^"+ strPattern;
-					}
-					if (!(/\$$/.test(strPattern))) {
-						strPattern = strPattern+ "$";
-					}
+			if (!(/^\^/.test(strPattern))) {
+				strPattern = "^"+ strPattern;
+			}
+			if (!(/\$$/.test(strPattern))) {
+				strPattern = strPattern+ "$";
+			}
         }
 
         ptnRad = new RegExp(strPattern, objChkIC.checked? "i": "");
@@ -409,7 +481,6 @@ To view a copy of this license, click to visit http://creativecommons.org/licens
         if (confirm( "Remove test case ["+ objSrc.cells[0].innerText+ "]?")) {
           objSrc.parentNode.deleteRow(objSrc.rowIndex);
         }
-        resetResult();
       }
       function resetResult() {
         var objTDRes = document.getElementById("tdRes");
@@ -434,8 +505,8 @@ To view a copy of this license, click to visit http://creativecommons.org/licens
         var arrHTML=[];
 
         arrHTML.push( "<tr><th class='testcase' ondblclick='editTestcase()'>"+ pstrTestcase);
-        arrHTML.push( "</th><td ondblclick='removeTestcase()' class='tdDel'>DEL");
-        arrHTML.push( "</td><td class='tdExpRes' ondblclick='toggleExpRes()'>");
+        arrHTML.push( "</th><td ondblclick='removeTestcase()' class='tdDel' title='Drop the selected test case'>DEL");
+        arrHTML.push( "</td><td class='tdExpRes' ondblclick='toggleExpRes()' title='Toggle the expected result of the selected test case'>");
         arrHTML.push( pblnExpres? "true": "false");
         arrHTML.push( "</td><td></td><td></td></tr>");
         return arrHTML.join("");
@@ -444,20 +515,20 @@ To view a copy of this license, click to visit http://creativecommons.org/licens
       function editTestcase() {
         var objSrc = event.srcElement.parentNode;
         var strTestcase = objSrc.cells[0].innerText;
-        strTestcase = prompt( "Edit test case",strTestcase);
-        if (strTestcase) {
-          objSrc.cells[0].innerText = strTestcase;
+        var strNewTestcase = prompt( "Edit test case",strTestcase);
+        if (strNewTestcase !== strTestcase) {
+          objSrc.cells[0].innerText = strNewTestcase;
           resetResult();
         }
       }
 
       function loadTests() {
         var objSrc = event.srcElement;
-        var strFilename = "RegExpTest1.xml";
+        var strNewFilename = "RegExpTest1.xml";
         var arrRegExTests = [];
         var arrTestPatt, arrTestRes, numTest;
 
-        strFilename = prompt("Please specify the location and name of the project file.",strFilename);
+        var strFilename = prompt("Please specify the location and name of the project file.",strNewFilename);
         if (strFilename) {
           clearAll();
           objSourceDocument.async = false;
@@ -483,6 +554,7 @@ To view a copy of this license, click to visit http://creativecommons.org/licens
           arrRegExTests.push(']}');
           loadTestcases(arrRegExTests.join(""));
           objSrc.parentNode.className = "loaded";
+          showInStatusBar('Project loaded: '+ strFilename);
         }
         else {
           alert("Warning: No file specified.");
@@ -490,10 +562,10 @@ To view a copy of this license, click to visit http://creativecommons.org/licens
       }
       function saveTests() {
         var objSrc = event.srcElement;
-        var strFilename=objSourceDocument.url;
+        var strOldFilename=objSourceDocument.url;
         var arrTestcases=[];
 
-        strFilename = prompt("Please specify the location and name of the project file.",strFilename);
+        var strFilename = prompt("Please specify the location and name of the project file.",strOldFilename);
         if (strFilename) {
           arrTestcases.push('<RegExTest pattern="'+
             document.getElementById("txtPattern").innerText.replace(/\\/g,"\\\\"));
@@ -516,6 +588,8 @@ To view a copy of this license, click to visit http://creativecommons.org/licens
           objSourceDocument.loadXML(arrTestcases.join(""));
           objSourceDocument.save(strFilename);
           objSrc.parentNode.className = "unloaded";
+          resetResult();
+          showInStatusBar('Project saved: '+ strFilename);
         }
       }
       function clearAll() {
@@ -538,9 +612,11 @@ To view a copy of this license, click to visit http://creativecommons.org/licens
       }
 
       function switchDisplay(pstrDisplay) {
-          document.body.className = pstrDisplay;
+        document.body.className = pstrDisplay;
       }
-
+	  function showInStatusBar(pstrMessage) {
+	  	document.querySelector('.statusBar').innerText = pstrMessage;
+	  }
     </script>
   </body>
 </html>

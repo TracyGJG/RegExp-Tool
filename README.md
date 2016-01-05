@@ -17,7 +17,7 @@ Facilities include the ability to:
 
 -----
 
-## Planned improvements
+## Latest improvements: 5th January 2016
 
 * Include a page of help text documenting how to use the application
 * Include more tool-tips on the buttons
