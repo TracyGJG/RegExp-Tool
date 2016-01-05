@@ -44,7 +44,7 @@
       	position: absolute;
       	top: 0;
       	left: 0;
-      	bottom: 40px;
+      	bottom: 42px;
       	right: 0;
         overflow: auto;
       }
@@ -62,7 +62,10 @@
         height: 26px;
         background-color: #DDD;
       }
-      .tabTest { width:100%;}
+      .tabTest {
+      	width:100%;
+      	table-layout: fixed;
+      }
       #tbTests td { text-align: center;}
       #tbTests th {
         text-align: left;
@@ -121,6 +124,7 @@
         text-align: center;
         height: 22px;
         padding: 2px 0 0;
+        overflow: auto;
       }
       td.tdExpRes {
         color: blue;
@@ -215,7 +219,7 @@
       }
       span.Title { font-size: 18pt; font-weight: bold;}
       span.Subtitle { font-size: 14pt;}
-      
+
 a.gitHub {
 	position: absolute;
 	bottom: 5px;
@@ -236,7 +240,8 @@ a.ccLic {
 }
 
 	@media print {
-      th.thAdd, td.tdDel { display: none;}
+      th.thAdd, td.tdDel { visibility: hidden;}
+      footer { display: none;}
 	  button { visibility: hidden;}
       .tabTest, .tabTest td, .tabTest th { border: 1px solid #000;}
 	}
@@ -297,8 +302,8 @@ a.ccLic {
             <col width='*'/>
             <col width='40px'/>
             <col width='80px'/>
-            <col width='82px'/>
-            <col width='82px'/>
+            <col width='80px'/>
+            <col width='80px'/>
           </colgroup>
           <tbody id='tbTests'></tbody>
         </table>
