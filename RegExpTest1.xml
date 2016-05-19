@@ -17,4 +17,5 @@
 	<test expRes="false">99999</test>
 	<test expRes="false">.</test>
 	<test expRes="false">0.</test>
+	<test expRes="false">00.1</test>
 </RegExTest>
