@@ -1,6 +1,6 @@
 # RegExp-Tool
 
-Regular Expression Tool: HTA-based utility for developers preparing and testing Regular Expression pattern.
+Regular Expression Tool: HTA-based utility for developers preparing and testing Regular Expression pattern
 
 The small application employs a Microsoft HyperText Application (HTA) container to present its User Interface. The application enables to user to load and save project files on their local Windows PC. 
 
